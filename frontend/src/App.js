@@ -1,16 +1,14 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import PasteForm from "./components/PasteForm";
 import PasteView from "./components/PasteView";
 
 const App = () => {
   return (
-    <Router>
-      <Switch>
-        <Route path='/' exact component={PasteForm} />
-        <Route path='/:url' component={PasteView} />
-      </Switch>
-    </Router>
+    <Routes>
+      <Route path='/' element={<PasteForm />} />
+      <Route path='/:url' element={<PasteView />} />
+    </Routes>
   );
 };
 

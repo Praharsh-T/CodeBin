@@ -1,20 +1,13 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import mongoose from "mongoose";
 
-const PasteSchema = new Schema({
-  content: {
-    type: String,
-    required: true,
+const pasteSchema = new mongoose.Schema(
+  {
+    url: { type: String, required: true, unique: true },
+    content: { type: String, required: true },
   },
-  url: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Paste", PasteSchema);
+const Paste = mongoose.model("Paste", pasteSchema);
+
+export default Paste;

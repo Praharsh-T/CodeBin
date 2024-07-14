@@ -1,33 +1,34 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const { nanoid } = require("nanoid");
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import pasteRoutes from "./routes/pasteRoutes.js";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: true }));
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI, {})
+  .then(() => console.log("MongoDB connected"))
+  .catch((error) => console.error("MongoDB connection error:", error));
+
+// Parse incoming JSON data (only once)
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Mount paste routes
+app.use("/api/pastes", pasteRoutes);
+
+// Error handling middleware (optional, but recommended)
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Log the error for debugging
+  res.status(500).json({ message: "Server Error" }); // Send a generic error message to the client
 });
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Connected to MongoDB");
-});
-
-// Routes
-app.use("/api/pastes", require("./routes/pastes"));
-
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
